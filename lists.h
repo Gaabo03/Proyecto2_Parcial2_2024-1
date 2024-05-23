@@ -32,7 +32,7 @@ public:
 	};
 
 lists();
-void newNodo(Nodo *&acceso, int _price, COORD _position, char* _name, bool _isHere, int _id);
+void newNodo(Nodo *&acceso, int _price, COORD _position, char* _name);
 void read(const char *nombreArchivo, int indice, Binario* datos);
 void readLoop(Nodo *&acceso, const char *nombre_archivo);
 size_t getSize(const char *nombreArchivo);

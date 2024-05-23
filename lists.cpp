@@ -3,15 +3,17 @@
 lists::lists(){
 }
 
-void lists::newNodo(Nodo *&acceso, int _price, COORD _position, char* _name, bool _isHere, int _id)
+void lists::newNodo(Nodo *&acceso, int _price, COORD _position, char* _name)
 {
     Nodo *nuevo_nodo = new Nodo();
     nuevo_nodo->price = _price;
     nuevo_nodo->position = _position;
     strncpy(nuevo_nodo->name, _name, sizeof(nuevo_nodo->name) - 1);
     nuevo_nodo->name[sizeof(nuevo_nodo->name) - 1] = '\0';
-    nuevo_nodo->isHere = _isHere;
-    nuevo_nodo->id = _id;
+    for(int i = 0; i<4; i++){
+    	nuevo_nodo->houseHere[i] = false;
+    	nuevo_nodo->isHere[i] = false;
+	}
     
 
     if (acceso == NULL)
@@ -58,7 +60,7 @@ void lists::readLoop(Nodo *&acceso, const char *nombre_archivo)
     for (int i = 0; i < size; i++)
     {
         read(nombre_archivo, i, &auxiliar);
-        newNodo(acceso, auxiliar.price, auxiliar.position, auxiliar.name, false, 0);
+        newNodo(acceso, auxiliar.price, auxiliar.position, auxiliar.name);
     }
 }
 
@@ -86,36 +88,44 @@ bool lists::isEmpty(const char* nombreArchivo)
 
 void lists::printAll(Nodo *acceso)
 {
+	int i = 0;
     Nodo *actual = acceso;
     do
     {
+    	std::cout << i << "\n";
+    	i++;
         std::cout << actual->name << "\n";
         std::cout << actual->position.X << "\n";
-		std::cout << actual->position.Y << "\n";
+		std::cout << actual->position.Y << "\n\n";
         actual = actual->sig;
     } while (actual != acceso);
 }
 
 void lists::guardarTodo(){
-	Binario *datos;
+	Binario *nuevo_nodo = new Binario();
 	char nombre[45];
 	
 	for(int i = 0; i<28; i++){
 		std::ofstream archivo("tablero.txt", std::ios::binary | std::ios::app);
 		std::cout << "NOMBRE: ";
-		std::cin.getline(datos->name, 45);
+		std::cin.getline(nombre, 45);
+		strncpy(nuevo_nodo->name, nombre, sizeof(nuevo_nodo->name) - 1);
+   		nuevo_nodo->name[sizeof(nuevo_nodo->name) - 1] = '\0';
 		std::cout << "PRECIO: ";
-		std::cin >> datos->price;
+		std::cin >> nuevo_nodo->price;
 		std::cout << "X: ";
-		std::cin >> datos->position.X;
+		std::cin >> nuevo_nodo->position.X;
 		std::cout << "Y: ";
-		std::cin >> datos->position.Y;
+		std::cin >> nuevo_nodo->position.Y;
+		std::cout << "COLOR: ";
+		std::cin >> nuevo_nodo->color;
+		std::cin.ignore();
 	    if (!archivo)
 	    {
 	        std::cout << "NO SE PUDO ABRIR EL ARCHIVO.";
 	        return;
 	    }
-    	archivo.write(reinterpret_cast<const char *>(datos), sizeof(Binario));
+    	archivo.write(reinterpret_cast<const char *>(nuevo_nodo), sizeof(Binario));
     	archivo.close();
 	}
 }
