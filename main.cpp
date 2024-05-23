@@ -211,6 +211,8 @@ void start(int _nPlayers)
 					}
 				}
 			}
+			// AQUÍ SE DEBE REFRESCAR EL TABLERO
+			
 			if(_nPlayers - retirados == 1){
 				gameOver = true;
 				break;
