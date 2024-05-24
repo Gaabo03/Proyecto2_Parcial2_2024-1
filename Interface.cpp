@@ -7,6 +7,7 @@ void Interface::menu(){
 
 void Interface::imprimirEnPosicion(COORD posicion, int textColor, int backgroundColor, const string texto){
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleOutputCP(CP_UTF8);
     SetConsoleCursorPosition(hConsole, posicion);
     int colorAttribute = (backgroundColor << 4) | textColor;
     SetConsoleTextAttribute(hConsole, colorAttribute);
