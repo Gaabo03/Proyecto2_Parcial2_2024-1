@@ -14,82 +14,37 @@ void Interface::imprimirEnPosicion(COORD posicion, int textColor, int background
 }
 
 void Interface::imprimirTablero(lists::Nodo *acceso){
-	COORD casilla;
-	/*
-	//Imprimiento lineas verticales
-	casilla.X = 4;
-	casilla.Y = 3;
-	for (int i = 0; i < 3; ++i) {
-	    imprimirEnPosicion(casilla, 15, 0, "|      |      |      |      |      |      |      |      |");
-	    casilla.Y++;
-	}
-	for (int i = 0; i < 25; ++i) {
-	    imprimirEnPosicion(casilla, 15, 0, "|      |                                         |      |");
-	    casilla.Y++;
-	}
-	for (int i = 0; i < 3; ++i) {
-	    imprimirEnPosicion(casilla, 15, 0, "|      |      |      |      |      |      |      |      |");
-	    casilla.Y++;
-	}
-	
-	//Imprimiendo lineas horizontales
-	casilla.X = 4;
-	casilla.Y = 2;
-	for (int i = 0; i < 2; ++i) {
-	    imprimirEnPosicion(casilla, 15, 0, "---------------------------------------------------------");
-	    casilla.Y += 4;
-	}
-	
-	for (int i = 0; i < 5; ++i) {
-	    imprimirEnPosicion(casilla, 15, 0, "--------                                         --------");
-	    casilla.Y += 4;
-	}
-	
-	for (int i = 0; i < 2; ++i) {
-	    imprimirEnPosicion(casilla, 15, 0, "---------------------------------------------------------");
-	    casilla.Y += 4;
-	}*/
-	
+	//Impresion de bordes
 	cout << endl << endl;
 	cout << "    ---------------------------------------------------------" << endl;
 	cout << "    |      |      |      |      |      |      |      |      |" << endl;
 	cout << "    |      |      |      |      |      |      |      |      |" << endl;
-	cout << "    |      |      |      |      |      |      |      |      |" << endl;
 	cout << "    ---------------------------------------------------------" << endl;
 	cout << "    |      |                                         |      |" << endl;
 	cout << "    |      |                                         |      |" << endl;
-	cout << "    |      |                                         |      |" << endl;
 	cout << "    --------                                         --------" << endl;
-	cout << "    |      |                                         |      |" << endl;
-	cout << "    |      |                                         |      |" << endl;
-	cout << "    |      |                                         |      |" << endl;
-	cout << "    --------                                         --------" << endl;
-	cout << "    |      |                                         |      |" << endl;
 	cout << "    |      |                                         |      |" << endl;
 	cout << "    |      |                                         |      |" << endl;
 	cout << "    --------                                         --------" << endl;
 	cout << "    |      |                                         |      |" << endl;
 	cout << "    |      |                                         |      |" << endl;
+	cout << "    --------                                         --------" << endl;
+	cout << "    |      |                                         |      |" << endl;
 	cout << "    |      |                                         |      |" << endl;
 	cout << "    --------                                         --------" << endl;
 	cout << "    |      |                                         |      |" << endl;
 	cout << "    |      |                                         |      |" << endl;
-	cout << "    |      |                                         |      |" << endl;
 	cout << "    --------                                         --------" << endl;
-	cout << "    |      |                                         |      |" << endl;
 	cout << "    |      |                                         |      |" << endl;
 	cout << "    |      |                                         |      |" << endl;
 	cout << "    ---------------------------------------------------------" << endl;
-	cout << "    |      |      |      |      |      |      |      |      |" << endl;
 	cout << "    |      |      |      |      |      |      |      |      |" << endl;
 	cout << "    |      |      |      |      |      |      |      |      |" << endl;
 	cout << "    ---------------------------------------------------------" << endl;
 	
+	// Impresion de casillas del tablero
 	lists::Nodo *actual = acceso;
-	for(int i = 0; i <28; i++){
-		casilla.X = actual->position.X - 2;
-		casilla.Y = actual->position.Y - 2;
-		
+	for (int i = 0; i < 28; i++){
 		stringstream ss;
 		if(i == 0){
 			ss << " HOME ";
@@ -100,20 +55,20 @@ void Interface::imprimirTablero(lists::Nodo *acceso){
 		} else{
 			ss << " $" << actual->price << " ";
 		}
-		
-		imprimirEnPosicion(casilla, 0, actual->color, ss.str());
-		casilla.Y++;
-		for (int j = casilla.Y+2; casilla.Y < j; casilla.Y++){
-			imprimirEnPosicion(casilla, 0, 15, "      ");
-		}
-		
+		imprimirEnPosicion(actual->position, 0, actual->color, ss.str());
+		actual->position.Y++;
+		imprimirEnPosicion(actual->position, 0, 15, "      ");
 		actual = actual->ant;
 	}
 	
+	
+	COORD casilla;
 	casilla.X = 0;
-	casilla.Y = 40;
+	casilla.Y = 28;
 	imprimirEnPosicion(casilla, 15, 0, "");
+	system("PAUSE");
 }
+
 
 void Interface::actualizarTablero(lists::Nodo *acceso){
 	

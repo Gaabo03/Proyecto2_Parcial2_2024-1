@@ -29,16 +29,14 @@ int main(int argc, char** argv) {
 	lista.readLoop(acceso, "tablero.txt");
 	acceso = acceso->ant;
 	interfaz.imprimirTablero(acceso);
-	
-	/*init(nPlayers);
-	*/
+	//init(nPlayers);
 }
 
 void init(int _nPlayers)
 {
 	// std::cout << acceso->name;
 	accesoJugador.resize(_nPlayers);
-	
+
 	for(int i = 0; i < _nPlayers; i++)
 	{
 		acceso->isHere[i] = true;
