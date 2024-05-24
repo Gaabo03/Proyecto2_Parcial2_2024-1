@@ -54,163 +54,176 @@ void init(int _nPlayers)
 
 void start(int _nPlayers)
 {
-	int dado, tarjeta, iterador = 0, retirados = 0;
+	int dado, tarjeta, iterador = 0, retirados = 0, diasCarcel[_nPlayers];
 	bool seVende = true, ubicacionEncontrada = false, rondaTerminada = false;
-	char compra[2];
+	char compra[2], carcel[2];
 	// Do while que define las rondas
 	do
 	{
 		// For para cada jugador en la ronda
 		for(int i = 0; i < _nPlayers; i++)
 		{
-			seVende = true;
-			rondaTerminada = false;
-			// Primero tiramos el dado
-			dado = random();
-			// Quitamos al jugador de la casilla original
-			accesoJugador[i]->isHere[i] = false;
-			// Movemos al jugador tantas casillas lo indique el dado
-			for(int a= 0; a<dado; a++){
-				accesoJugador[i] = accesoJugador[i]->ant;
-			}
-			// Ubicamos al jugador en la nueva casilla
-			accesoJugador[i]->isHere[i] = true;
-			
-			// If para verificar si caimos en una de las casillas principales
-			if(strcmpi(accesoJugador[i]->name, "HOME") == 0){
-				pagoMovil[i] += 200;
-				rondaTerminada = true;
-			}else if(strcmpi(accesoJugador[i]->name, "??") == 0){ // Si caemos aquí, moveremos al jugador
-				tarjeta = random();
-				// Con un do recorremos el tablero hasta encontrar la posición de la tarjeta que obtuvo el usuario en la ronda
-				do
-				{
-					switch (tarjeta){
-						case 1:
-							if(strcmpi(acceso->name, "JAIL") == 0){
-								// Movemos al jugador de la posición original
-								accesoJugador[i]->isHere[i] = false;
-								accesoJugador[i] = acceso;
-								// Lo ubicamos en la nueva posición
-								accesoJugador[i]->isHere[i] = true;
-								ubicacionEncontrada = true;
-							}
-							break;
-						case 2:
-							if(strcmpi(acceso->name, "HOME") == 0){
-								accesoJugador[i]->isHere[i] = false;
-								accesoJugador[i] = acceso;
-								accesoJugador[i]->isHere[i] = true;
-								ubicacionEncontrada = true;
-							}
-							break;
-						case 3:
-							if(strcmpi(acceso->name, "ELECTRICITY") == 0){
-								accesoJugador[i]->isHere[i] = false;
-								accesoJugador[i] = acceso;
-								accesoJugador[i]->isHere[i] = true;
-								ubicacionEncontrada = true;
-							}
-							break;
-						case 4:
-							if(strcmpi(acceso->name, "RAILWAY") == 0){
-								accesoJugador[i]->isHere[i] = false;
-								accesoJugador[i] = acceso;
-								accesoJugador[i]->isHere[i] = true;
-								ubicacionEncontrada = true;
-							}
-							break;
-						case 5:
-							if(strcmpi(acceso->name, "HARBOR") == 0){
-								accesoJugador[i]->isHere[i] = false;
-								accesoJugador[i] = acceso;
-								accesoJugador[i]->isHere[i] = true;
-								ubicacionEncontrada = true;
-							}
-							break;
-						case 6:
-							if(strcmpi(acceso->name, "AIRPORT") == 0){
-								accesoJugador[i]->isHere[i] = false;
-								accesoJugador[i] = acceso;
-								accesoJugador[i]->isHere[i] = true;
-								ubicacionEncontrada = true;
-							}
-							break;
-					}	
-					// Si encontramos la ubicación de la tarjeta deja de repetirse el while
-					iterador++;
-					acceso = acceso->ant;
+			if(diasCarcel[i] == 0 || diasCarcel[i] == 4){
+				// El jugador no está en la cárcel o recién salió de la cárcel
+				diasCarcel[i] = 0;
+				seVende = true;
+				rondaTerminada = false;
+				// Primero tiramos el dado
+				dado = random();
+				// Quitamos al jugador de la casilla original
+				accesoJugador[i]->isHere[i] = false;
+				// Movemos al jugador tantas casillas lo indique el dado
+				for(int a= 0; a<dado; a++){
+					accesoJugador[i] = accesoJugador[i]->ant;
 				}
-				while(!ubicacionEncontrada && iterador < 28);
-			}
-			if(!rondaTerminada){
-				// Revisamos si el jugador está en una de las casillas especiales para que pague
-				if(strcmpi(accesoJugador[i]->name, "HARBOR") == 0){
-					if(pagoMovil[i] >= accesoJugador[i]->price){
-						pagoMovil[i] -= accesoJugador[i]->price;
-					}else{
-						retirados++;
-					}
+				// Ubicamos al jugador en la nueva casilla
+				accesoJugador[i]->isHere[i] = true;
+				
+				// If para verificar si caimos en una de las casillas principales
+				if(strcmpi(accesoJugador[i]->name, "HOME") == 0){
+					pagoMovil[i] += 200;
 					rondaTerminada = true;
-				}else if(strcmpi(accesoJugador[i]->name, "RAILWAY") == 0){
-					if(pagoMovil[i] >= accesoJugador[i]->price){
-						pagoMovil[i] -= accesoJugador[i]->price;
-					}else{
-						retirados++;
+				}else if(strcmpi(accesoJugador[i]->name, "??") == 0){ // Si caemos aquí, moveremos al jugador
+					tarjeta = random();
+					// Con un do recorremos el tablero hasta encontrar la posición de la tarjeta que obtuvo el usuario en la ronda
+					do
+					{
+						switch (tarjeta){
+							case 1:
+								if(strcmpi(acceso->name, "JAIL") == 0){
+									// Movemos al jugador de la posición original
+									accesoJugador[i]->isHere[i] = false;
+									accesoJugador[i] = acceso;
+									// Lo ubicamos en la nueva posición
+									accesoJugador[i]->isHere[i] = true;
+									ubicacionEncontrada = true;
+								}
+								break;
+							case 2:
+								if(strcmpi(acceso->name, "HOME") == 0){
+									accesoJugador[i]->isHere[i] = false;
+									accesoJugador[i] = acceso;
+									accesoJugador[i]->isHere[i] = true;
+									ubicacionEncontrada = true;
+								}
+								break;
+							case 3:
+								if(strcmpi(acceso->name, "ELECTRICITY") == 0){
+									accesoJugador[i]->isHere[i] = false;
+									accesoJugador[i] = acceso;
+									accesoJugador[i]->isHere[i] = true;
+									ubicacionEncontrada = true;
+								}
+								break;
+							case 4:
+								if(strcmpi(acceso->name, "RAILWAY") == 0){
+									accesoJugador[i]->isHere[i] = false;
+									accesoJugador[i] = acceso;
+									accesoJugador[i]->isHere[i] = true;
+									ubicacionEncontrada = true;
+								}
+								break;
+							case 5:
+								if(strcmpi(acceso->name, "HARBOR") == 0){
+									accesoJugador[i]->isHere[i] = false;
+									accesoJugador[i] = acceso;
+									accesoJugador[i]->isHere[i] = true;
+									ubicacionEncontrada = true;
+								}
+								break;
+							case 6:
+								if(strcmpi(acceso->name, "AIRPORT") == 0){
+									accesoJugador[i]->isHere[i] = false;
+									accesoJugador[i] = acceso;
+									accesoJugador[i]->isHere[i] = true;
+									ubicacionEncontrada = true;
+								}
+								break;
+						}	
+						// Si encontramos la ubicación de la tarjeta deja de repetirse el while
+						iterador++;
+						acceso = acceso->ant;
 					}
-					rondaTerminada = true;
-				}else if(strcmpi(accesoJugador[i]->name, "AIRPORT") == 0){
-					if(pagoMovil[i] >= accesoJugador[i]->price){
-						pagoMovil[i] -= accesoJugador[i]->price;
-					}else{
-						retirados++;
-					}
-					rondaTerminada = true;
-				}else if(strcmpi(accesoJugador[i]->name, "JAIL") == 0){
-					if(pagoMovil[i] >= accesoJugador[i]->price){
-						pagoMovil[i] -= accesoJugador[i]->price;
-					}else{
-						retirados++;
-					}
-					rondaTerminada = true;
-				}else if(strcmpi(accesoJugador[i]->name, "ELECTRICITY") == 0){
-					if(pagoMovil[i] >= accesoJugador[i]->price){
-						pagoMovil[i] -= accesoJugador[i]->price;
-					}else{
-						retirados++;
-					}
-					rondaTerminada = true;
+					while(!ubicacionEncontrada && iterador < 28);
 				}
-			}
-			
-			if(!rondaTerminada){
-				// For para ver si algún jugador s tiene una casa en la posición
-				for(int s = 0; s < _nPlayers; s++){
-					if(accesoJugador[i]->houseHere[s]){
-						seVende = false;
-						if(s == i){
-							break;
+				if(!rondaTerminada){
+					// Revisamos si el jugador está en una de las casillas especiales para que pague
+					if(strcmpi(accesoJugador[i]->name, "HARBOR") == 0){
+						if(pagoMovil[i] >= accesoJugador[i]->price){
+							pagoMovil[i] -= accesoJugador[i]->price;
 						}else{
+							retirados++;
+						}
+						rondaTerminada = true;
+					}else if(strcmpi(accesoJugador[i]->name, "RAILWAY") == 0){
+						if(pagoMovil[i] >= accesoJugador[i]->price){
+							pagoMovil[i] -= accesoJugador[i]->price;
+						}else{
+							retirados++;
+						}
+						rondaTerminada = true;
+					}else if(strcmpi(accesoJugador[i]->name, "AIRPORT") == 0){
+						if(pagoMovil[i] >= accesoJugador[i]->price){
+							pagoMovil[i] -= accesoJugador[i]->price;
+						}else{
+							retirados++;
+						}
+						rondaTerminada = true;
+					}else if(strcmpi(accesoJugador[i]->name, "JAIL") == 0){
+						// AQUÍ DEBEMOS PREGUNTAR AL JUGADOR SI DESEA PAGAR O PREFIERE PASAR TRES TURNOS EN LA CÁRCEL
+						if(strcmpi(compra, "S") == 0){
+							// Si quiere pagar
 							if(pagoMovil[i] >= accesoJugador[i]->price){
 								pagoMovil[i] -= accesoJugador[i]->price;
-								pagoMovil[s] += accesoJugador[i]->price;
-								break;
-							}else{
-								accesoJugador[i] = NULL;
 							}
+						}else{
+							// El jugador pasa tres turnos en la clase
+							diasCarcel[i] ++;
 						}
+						
+						rondaTerminada = true;
+					}else if(strcmpi(accesoJugador[i]->name, "ELECTRICITY") == 0){
+						if(pagoMovil[i] >= accesoJugador[i]->price){
+							pagoMovil[i] -= accesoJugador[i]->price;
+						}else{
+							retirados++;
+						}
+						rondaTerminada = true;
 					}
 				}
 				
-				if(seVende){
-					// Preguntamos si quiere comprar la propiedad
-					if((strcmpi(compra, "S") == 0) && (pagoMovil[i] >= accesoJugador[i]->price)){
-						// El jugador adquiere la casa
-						pagoMovil[i] -= accesoJugador[i]->price;
-						accesoJugador[i]->houseHere[i] = true;
+				if(!rondaTerminada){
+					// For para ver si algún jugador s tiene una casa en la posición
+					for(int s = 0; s < _nPlayers; s++){
+						if(accesoJugador[i]->houseHere[s]){
+							seVende = false;
+							if(s == i){
+								break;
+							}else{
+								if(pagoMovil[i] >= accesoJugador[i]->price){
+									pagoMovil[i] -= accesoJugador[i]->price;
+									pagoMovil[s] += accesoJugador[i]->price;
+									break;
+								}else{
+									accesoJugador[i] = NULL;
+								}
+							}
+						}
+					}
+					
+					if(seVende){
+						// Preguntamos si quiere comprar la propiedad
+						if((strcmpi(compra, "S") == 0) && (pagoMovil[i] >= accesoJugador[i]->price)){
+							// El jugador adquiere la casa
+							pagoMovil[i] -= accesoJugador[i]->price;
+							accesoJugador[i]->houseHere[i] = true;
+						}
 					}
 				}
+			}else{
+				// El jugador está en la cárcel
 			}
+			
 			// AQUÍ SE DEBE REFRESCAR EL TABLERO
 			
 			if(_nPlayers - retirados == 1){
