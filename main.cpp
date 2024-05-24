@@ -8,6 +8,7 @@
 
 lists lista;
 lists::Nodo *acceso = NULL;
+Interface interfaz;
 int pagoMovil[4];
 bool gameOver = false;
 void start(int _nPlayers);
@@ -23,18 +24,14 @@ const char* datos[] = {
         "GO TO THE AIRPORT"
 };
 
-void imprimirEnPosicion(COORD posicion, const char *texto){
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleCursorPosition(hConsole, posicion);
-    std::cout << texto;
-}
-
 int main(int argc, char** argv) {
 	int nPlayers = 1;
 	lista.readLoop(acceso, "tablero.txt");
 	acceso = acceso->ant;
-	init(nPlayers);
+	interfaz.imprimirTablero(acceso);
 	
+	/*init(nPlayers);
+	*/
 }
 
 void init(int _nPlayers)

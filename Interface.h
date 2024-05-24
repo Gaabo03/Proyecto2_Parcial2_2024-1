@@ -2,6 +2,8 @@
 #define INTERFACE_H
 
 #include <iostream>
+#include <string>
+#include <sstream>
 #include <windows.h>
 #include "lists.h"
 
@@ -9,7 +11,8 @@ class Interface {
 public:
 	void menu();
 	void imprimirTablero(lists::Nodo *acceso);
-	void imprimirEnPosicion(COORD posicion, int textColor, int backgroundColor, const char *texto);
+	void imprimirEnPosicion(COORD posicion, int textColor, int backgroundColor, const std::string texto);
+	void actualizarTablero(lists::Nodo *acceso);
 };
 
 #endif

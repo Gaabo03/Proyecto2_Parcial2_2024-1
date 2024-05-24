@@ -16,6 +16,7 @@ public:
     {
         int price;
         COORD position;
+        int color;
         char name[45];
         bool isHere[4];
         bool houseHere[4];
@@ -32,7 +33,7 @@ public:
 	};
 
 lists();
-void newNodo(Nodo *&acceso, int _price, COORD _position, char* _name);
+void newNodo(Nodo *&acceso, int _price, COORD _position, char* _name, int _color);
 void read(const char *nombreArchivo, int indice, Binario* datos);
 void readLoop(Nodo *&acceso, const char *nombre_archivo);
 size_t getSize(const char *nombreArchivo);

@@ -3,11 +3,12 @@
 lists::lists(){
 }
 
-void lists::newNodo(Nodo *&acceso, int _price, COORD _position, char* _name)
+void lists::newNodo(Nodo *&acceso, int _price, COORD _position, char* _name, int _color)
 {
     Nodo *nuevo_nodo = new Nodo();
     nuevo_nodo->price = _price;
     nuevo_nodo->position = _position;
+    nuevo_nodo->color = _color;
     strncpy(nuevo_nodo->name, _name, sizeof(nuevo_nodo->name) - 1);
     nuevo_nodo->name[sizeof(nuevo_nodo->name) - 1] = '\0';
     for(int i = 0; i<4; i++){
@@ -60,7 +61,7 @@ void lists::readLoop(Nodo *&acceso, const char *nombre_archivo)
     for (int i = 0; i < size; i++)
     {
         read(nombre_archivo, i, &auxiliar);
-        newNodo(acceso, auxiliar.price, auxiliar.position, auxiliar.name);
+        newNodo(acceso, auxiliar.price, auxiliar.position, auxiliar.name, auxiliar.color);
     }
 }
 
