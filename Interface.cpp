@@ -7,7 +7,6 @@ void Interface::menu(){
 
 void Interface::imprimirEnPosicion(COORD posicion, int textColor, int backgroundColor, const string texto){
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleOutputCP(CP_UTF8);
     SetConsoleCursorPosition(hConsole, posicion);
     int colorAttribute = (backgroundColor << 4) | textColor;
     SetConsoleTextAttribute(hConsole, colorAttribute);
@@ -16,7 +15,7 @@ void Interface::imprimirEnPosicion(COORD posicion, int textColor, int background
 
 void Interface::imprimirTablero(lists::Nodo *acceso){
 	COORD casilla;
-	
+	/*
 	//Imprimiento lineas verticales
 	casilla.X = 4;
 	casilla.Y = 3;
@@ -49,7 +48,42 @@ void Interface::imprimirTablero(lists::Nodo *acceso){
 	for (int i = 0; i < 2; ++i) {
 	    imprimirEnPosicion(casilla, 15, 0, "---------------------------------------------------------");
 	    casilla.Y += 4;
-	}
+	}*/
+	
+	cout << endl << endl;
+	cout << "    ---------------------------------------------------------" << endl;
+	cout << "    |      |      |      |      |      |      |      |      |" << endl;
+	cout << "    |      |      |      |      |      |      |      |      |" << endl;
+	cout << "    |      |      |      |      |      |      |      |      |" << endl;
+	cout << "    ---------------------------------------------------------" << endl;
+	cout << "    |      |                                         |      |" << endl;
+	cout << "    |      |                                         |      |" << endl;
+	cout << "    |      |                                         |      |" << endl;
+	cout << "    --------                                         --------" << endl;
+	cout << "    |      |                                         |      |" << endl;
+	cout << "    |      |                                         |      |" << endl;
+	cout << "    |      |                                         |      |" << endl;
+	cout << "    --------                                         --------" << endl;
+	cout << "    |      |                                         |      |" << endl;
+	cout << "    |      |                                         |      |" << endl;
+	cout << "    |      |                                         |      |" << endl;
+	cout << "    --------                                         --------" << endl;
+	cout << "    |      |                                         |      |" << endl;
+	cout << "    |      |                                         |      |" << endl;
+	cout << "    |      |                                         |      |" << endl;
+	cout << "    --------                                         --------" << endl;
+	cout << "    |      |                                         |      |" << endl;
+	cout << "    |      |                                         |      |" << endl;
+	cout << "    |      |                                         |      |" << endl;
+	cout << "    --------                                         --------" << endl;
+	cout << "    |      |                                         |      |" << endl;
+	cout << "    |      |                                         |      |" << endl;
+	cout << "    |      |                                         |      |" << endl;
+	cout << "    ---------------------------------------------------------" << endl;
+	cout << "    |      |      |      |      |      |      |      |      |" << endl;
+	cout << "    |      |      |      |      |      |      |      |      |" << endl;
+	cout << "    |      |      |      |      |      |      |      |      |" << endl;
+	cout << "    ---------------------------------------------------------" << endl;
 	
 	lists::Nodo *actual = acceso;
 	for(int i = 0; i <28; i++){
