@@ -13,6 +13,7 @@ int pagoMovil[4];
 bool gameOver = false;
 void start(int _nPlayers);
 void init(int _nPlayers);
+std::vector<std::string> nombres;
 std::vector<lists::Nodo*> accesoJugador;
 int random();
 const char* datos[] = {
@@ -25,16 +26,16 @@ const char* datos[] = {
 };
 
 int main(int argc, char** argv) {
-	int nPlayers = 1;
+	interfaz.menu();
+	nombres = interfaz.pedirDatos();
+	int nPlayers = nombres.size();
 	lista.readLoop(acceso, "tablero.txt");
 	acceso = acceso->ant;
-	interfaz.imprimirTablero(acceso);
-	//init(nPlayers);
+	init(nPlayers);
 }
 
 void init(int _nPlayers)
 {
-	// std::cout << acceso->name;
 	accesoJugador.resize(_nPlayers);
 
 	for(int i = 0; i < _nPlayers; i++)
@@ -45,7 +46,6 @@ void init(int _nPlayers)
 	}
 	
 	start(_nPlayers);
-	
 }
 
 void start(int _nPlayers)
@@ -53,6 +53,12 @@ void start(int _nPlayers)
 	int dado, tarjeta, iterador = 0, retirados = 0, diasCarcel[_nPlayers];
 	bool seVende = true, ubicacionEncontrada = false, rondaTerminada = false;
 	char compra[2], carcel[2];
+	
+	for (int i=0; i<_nPlayers; i++)
+		diasCarcel[i] = 0;
+		
+	interfaz.imprimirTablero(acceso, nombres);
+	std::cin.get();
 	// Do while que define las rondas
 	do
 	{
@@ -74,6 +80,11 @@ void start(int _nPlayers)
 				}
 				// Ubicamos al jugador en la nueva casilla
 				accesoJugador[i]->isHere[i] = true;
+				
+				
+				interfaz.actualizarTablero(acceso); //ACA ESTOY INTENTANDO IMPRIMIR EL MOVIMIENTO (detecta que se movió pero no hacia donde)
+				std::cin.get();
+				
 				
 				// If para verificar si caimos en una de las casillas principales
 				if(strcmpi(accesoJugador[i]->name, "HOME") == 0){
@@ -135,7 +146,7 @@ void start(int _nPlayers)
 									ubicacionEncontrada = true;
 								}
 								break;
-						}	
+						}
 						// Si encontramos la ubicaciï¿½n de la tarjeta deja de repetirse el while
 						iterador++;
 						acceso = acceso->ant;
