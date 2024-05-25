@@ -26,12 +26,17 @@ const char* datos[] = {
 };
 
 int main(int argc, char** argv) {
-	interfaz.menu();
-	nombres = interfaz.pedirDatos();
-	int nPlayers = nombres.size();
-	lista.readLoop(acceso, "tablero.txt");
-	acceso = acceso->ant;
-	init(nPlayers);
+	bool menu = false;
+	do{
+		menu = interfaz.menu();
+		if (menu){
+			nombres = interfaz.pedirDatos();
+			int nPlayers = nombres.size();
+			lista.readLoop(acceso, "tablero.txt");
+			acceso = acceso->ant;
+			init(nPlayers);
+		}
+	} while(menu); 
 }
 
 void init(int _nPlayers)
@@ -57,8 +62,8 @@ void start(int _nPlayers)
 	for (int i=0; i<_nPlayers; i++)
 		diasCarcel[i] = 0;
 		
-	interfaz.imprimirTablero(acceso, nombres);
-	std::cin.get();
+	interfaz.imprimirTablero(acceso, nombres, pagoMovil);
+	
 	// Do while que define las rondas
 	do
 	{
@@ -72,25 +77,25 @@ void start(int _nPlayers)
 				rondaTerminada = false;
 				// Primero tiramos el dado
 				dado = random();
+				interfaz.actualizarTablero(dado, nombres[i]); //Imprimir numero del dado, turno actual.
 				// Quitamos al jugador de la casilla original
 				accesoJugador[i]->isHere[i] = false;
 				// Movemos al jugador tantas casillas lo indique el dado
 				for(int a= 0; a<dado; a++){
 					accesoJugador[i] = accesoJugador[i]->ant;
+					if(strcmpi(accesoJugador[i]->name, "HOME") == 0){
+						pagoMovil[i] += 200;
+						rondaTerminada = true;
+					}
 				}
 				// Ubicamos al jugador en la nueva casilla
 				accesoJugador[i]->isHere[i] = true;
 				
-				
-				interfaz.actualizarTablero(acceso); //ACA ESTOY INTENTANDO IMPRIMIR EL MOVIMIENTO (detecta que se movió pero no hacia donde)
-				std::cin.get();
+				interfaz.actualizarTablero(acceso, pagoMovil); //Imprimir movimiento, actualiza precio.
 				
 				
 				// If para verificar si caimos en una de las casillas principales
-				if(strcmpi(accesoJugador[i]->name, "HOME") == 0){
-					pagoMovil[i] += 200;
-					rondaTerminada = true;
-				}else if(strcmpi(accesoJugador[i]->name, "??") == 0){ // Si caemos aquï¿½, moveremos al jugador
+				if(strcmpi(accesoJugador[i]->name, "??") == 0){ // Si caemos aquï¿½, moveremos al jugador
 					tarjeta = random();
 					// Con un do recorremos el tablero hasta encontrar la posiciï¿½n de la tarjeta que obtuvo el usuario en la ronda
 					do
@@ -220,10 +225,14 @@ void start(int _nPlayers)
 					
 					if(seVende){
 						// Preguntamos si quiere comprar la propiedad
-						if((strcmpi(compra, "S") == 0) && (pagoMovil[i] >= accesoJugador[i]->price)){
-							// El jugador adquiere la casa
-							pagoMovil[i] -= accesoJugador[i]->price;
-							accesoJugador[i]->houseHere[i] = true;
+						if (pagoMovil[i] >= accesoJugador[i]->price){
+							std::string respuestaStr = interfaz.preguntarJugador("Desea comprar esta propiedad? (S/N)");
+							strcpy(compra, respuestaStr.c_str());
+							if((strcmpi(compra, "S") == 0)){
+								// El jugador adquiere la casa
+								pagoMovil[i] -= accesoJugador[i]->price;
+								accesoJugador[i]->houseHere[i] = true;
+							}
 						}
 					}
 				}
@@ -232,6 +241,7 @@ void start(int _nPlayers)
 			}
 			
 			// AQUï¿½ SE DEBE REFRESCAR EL TABLERO
+			interfaz.actualizarTablero(acceso, pagoMovil);
 			
 			if(_nPlayers - retirados == 1){
 				gameOver = true;

@@ -6,15 +6,21 @@
 #include <sstream>
 #include <vector>
 #include <windows.h>
+#include <conio.h>
 #include "lists.h"
 
 class Interface {
 public:
-	void menu();
+	int nJugadores;
+	
+	bool menu();
 	std::vector<std::string> pedirDatos();
-	void imprimirTablero(lists::Nodo *acceso, std::vector<std::string> nombres);
+	void imprimirTablero(lists::Nodo* acceso, std::vector<std::string> nombres, int* pagoMovil);
 	void imprimirEnPosicion(COORD posicion, int textColor, int backgroundColor, const std::string texto);
-	void actualizarTablero(lists::Nodo *acceso);
+	void imprimirEnPosicion(int x, int y, int textColor, int backgroundColor, const std::string texto);
+	void actualizarTablero(int dado, std::string jugador);
+	void actualizarTablero(lists::Nodo *acceso, int* pagoMovil);
+	char* preguntarJugador(const std::string& pregunta);
 };
 
 #endif
