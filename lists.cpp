@@ -130,3 +130,23 @@ void lists::guardarTodo(){
     	archivo.close();
 	}
 }
+
+void lists::modificarPrecio(){
+	Binario *datos = new Binario();
+	std::ifstream archivoL("tablero.txt", std::ios::binary);
+	
+	while(archivoL.read(reinterpret_cast<char *>(datos), sizeof(Binario))){
+		std::ofstream archivo("tableroNewN.txt", std::ios::binary | std::ios::app);
+		const char* casillasEspeciales[] = { "HARBOR", "RAILWAY", "AIRPORT", "ELECTRICITY" };
+		for(int i = 0; i<4; i++){
+			if(strcmp(datos->name, casillasEspeciales[i]) == 0){
+				datos->price = 50;
+			}	std::cout << datos->price << std::endl;
+		}
+    	archivo.write(reinterpret_cast<const char *>(datos), sizeof(Binario));
+    	archivo.close();
+	}
+	archivoL.close();
+	remove("tablero.txt");
+	rename("tableroNewN.txt", "tablero.txt");
+}

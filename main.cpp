@@ -28,6 +28,7 @@ const char* datos[] = {
 
 int main(int argc, char** argv) {
 	bool menu = false;
+	lista.modificarPrecio();
 	do{
 		menu = interfaz.menu();
 		if (menu){
@@ -123,11 +124,11 @@ void start(int _nPlayers)
 					for (int j=0; j<4; j++){
 						if(strcmpi(accesoJugador[i]->name, casillasEspeciales[j]) == 0){
 							interfaz.casillaEspecial(accesoJugador[i]);
-							if(!(pagoMovil[i] >= 50)/*accesoJugador[i]->price*/){
+							if(!(pagoMovil[i] >= accesoJugador[i]->price)/*accesoJugador[i]->price*/){
 								retirados++;
 								eliminarJugador(i, accesoJugador[i]);
 							}
-							pagoMovil[i] -= 50; //accesoJugador[i]->price;
+							pagoMovil[i] -= accesoJugador[i]->price; //accesoJugador[i]->price;
 							rondaTerminada = true;
 						}
 					}
@@ -163,11 +164,12 @@ void start(int _nPlayers)
 							}else{
 								interfaz.propiedadAdquirida(accesoJugador[i], 1, nombres[s]);
 								int montoFinal = accesoJugador[i]->price * 0.20;
-								pagoMovil[i] -= montoFinal;
 								if(pagoMovil[i] >= montoFinal){
 									pagoMovil[s] += montoFinal;
 									break;
 								}else{
+									pagoMovil[i] -= montoFinal;
+									accesoJugador[i] == NULL;
 									retirados++;
 									eliminarJugador(i, accesoJugador[i]);
 								}
@@ -188,6 +190,9 @@ void start(int _nPlayers)
 						}
 					}
 				}
+			}else if(accesoJugador[i] == NULL){
+				// EL JUGADOR NO EXISTE
+				
 			}else{ // Jugador en la carcel
 				diasCarcel[i]++;
 			}
@@ -196,7 +201,17 @@ void start(int _nPlayers)
 			
 			if(_nPlayers - retirados == 1 || pagoMovil[i] > 5000){
 				gameOver = true;
-				interfaz.ganadorPartida(nombres[i]);
+				if(pagoMovil[i] > 5000){
+					interfaz.ganadorPartida(nombres[i]);
+				}else{
+					int maximo = 0;
+					for(int a = 0; a < _nPlayers; a++){
+						if (pagoMovil[a] > maximo) {
+				            maximo = a;
+				        }
+					}
+					interfaz.ganadorPartida(nombres[maximo]);
+				}
 				break;
 			}
 		} // Aqu� termina el turno de un jugador

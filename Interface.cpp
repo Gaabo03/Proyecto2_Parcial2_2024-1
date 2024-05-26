@@ -150,7 +150,9 @@ void Interface::imprimirTablero(lists::Nodo* acceso, vector<string> nombres, int
 			ss << "  ??  ";
 		} else if (i == 14){
 			ss << " JAIL ";
-		} else{
+		} else if (i == 4 || i == 11 || i == 18 || i == 25){
+			ss << " $" << acceso->price << "  ";
+		}else{
 			ss << " $" << acceso->price << " ";
 		}
 		imprimirEnPosicion(acceso->position, 0, acceso->color, ss.str());
@@ -282,6 +284,7 @@ void Interface::eliminarJugador(int jugador, string nombre){
 	stringstream ss;
 	ss << "'*' " << nombre << "-> ELIMINADO";
 	imprimirEnPosicion(67, 3+(2*jugador), 8, 0, ss.str());
+	Sleep(2000);
 }
 
 void Interface::ganadorPartida(string nombre){

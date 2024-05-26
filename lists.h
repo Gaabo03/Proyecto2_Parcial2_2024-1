@@ -40,7 +40,7 @@ size_t getSize(const char *nombreArchivo);
 bool isEmpty(const char* nombreArchivo);
 void printAll(Nodo *acceso);
 void guardarTodo();
-
+void modificarPrecio();
 };
 
 #endif
