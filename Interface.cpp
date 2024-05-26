@@ -18,11 +18,18 @@ void Interface::imprimirEnPosicion(int x, int y, int textColor, int backgroundCo
     SetConsoleCursorPosition(hConsole, posicion);
     int colorAttribute = (backgroundColor << 4) | textColor;
     SetConsoleTextAttribute(hConsole, colorAttribute);
-    std::cout << texto << endl;;
+    std::cout << texto;
+}
+
+void Interface::pausarPantalla() {
+	imprimirEnPosicion(10, 28, 15, 0, "");
+    system("PAUSE");
+    imprimirEnPosicion(10, 28, 15, 0, "                                        ");
 }
 
 bool Interface::menu(){
 	while(true){
+		system("cls");
 		char tecla = '\0';
 		cout << endl << endl;
 		cout << "    =========================================================" << endl;
@@ -46,7 +53,7 @@ bool Interface::menu(){
 			case '1':
 				return true;
 			case '2':
-				//imprimirReglas();
+				imprimirReglas();
 				break;
 			case '3':
 				cout << "     Muchas gracias por jugar :)" << endl;
@@ -55,6 +62,31 @@ bool Interface::menu(){
 				cout << "Debe haber algún error" << endl;
 		}
 	}
+}
+
+void Interface::imprimirReglas(){
+	system("cls");
+	cout << "Normas del Juego - Monopoly Simplificado" << endl << endl;
+	cout << "Objetivo del Juego:" << endl;
+	cout << "Ser el ultimo jugador en pie, evitando la bancarrota y adquiriendo la mayor cantidad de propiedades y dinero posible." << endl << endl;
+	cout << "Preparacion del Juego:" << endl;
+	cout << "Selecciona el numero de jugadores, con un maximo de 4 participantes." << endl;
+	cout << "Cada jugador elige un nombre para identificarse en el juego." << endl;
+	cout << "El tablero se compone de 28 casillas, cada una representando una propiedad o una accion especial." << endl << endl;
+	cout << "Desarrollo del Juego:" << endl;
+	cout << "Los jugadores se turnan para lanzar un dado y moverse por el tablero." << endl;
+	cout << "Dependiendo de la casilla en la que caigan, los jugadores pueden:" << endl;
+	cout << "- Adquirir una propiedad si está disponible y tienen suficiente dinero." << endl;
+	cout << "- Pagar peajes si caen en una casilla especial como 'Puerto', 'Ferrocarril', 'Aeropuerto' o 'Electricidad'." << endl;
+	cout << "- Ir a la carcel, pagar una fianza para salir o esperar varios turnos para ser liberados." << endl;
+	cout << "- Recibir bonificaciones al pasar por la casilla 'Inicio'." << endl;
+	cout << "- Recoger tarjetas que pueden requerir que vayan a una casilla especifica." << endl<< endl;
+	cout << "Si otro jugador cae en una casilla propiedad de otro, debe pagar un alquiler al propietario." << endl;
+	cout << "El juego continua hasta que solo quede un jugador sin declararse en bancarrota o un jugador llegue a $5000" << endl<<endl;
+	cout << "Fin del Juego:" << endl;
+	cout << "El juego termina cuando solo queda un jugador en pie o cuando un jugador alcanza un cierto nivel de riqueza." << endl;
+	cout << "El jugador restante o el mas rico se declara ganador del juego." << endl;
+	system("PAUSE");
 }
 
 vector<string> Interface::pedirDatos(){
@@ -68,7 +100,7 @@ vector<string> Interface::pedirDatos(){
 	do{
 	cout << "    | Digite numero de jugadores (MAX 4): ";
 	cin >> nPlayers;
-	}while(nPlayers<1 || nPlayers>4);
+	}while(nPlayers<2 || nPlayers>4);
 	nJugadores = nPlayers;
 	cin.ignore();
 	for (int i = 0; i < nPlayers; i++){
@@ -89,7 +121,7 @@ void Interface::imprimirTablero(lists::Nodo* acceso, vector<string> nombres, int
 	cout << "    ---------------------------------------------------------" << endl;
 	cout << "    |      |                                         |      |" << endl;
 	cout << "    |      |  Turno de:                              |      |" << endl;
-	cout << "    --------  Dado:                                  --------" << endl;
+	cout << "    --------                                         --------" << endl;
 	cout << "    |      |                                         |      |" << endl;
 	cout << "    |      |                                         |      |" << endl;
 	cout << "    --------                                         --------" << endl;
@@ -141,9 +173,9 @@ void Interface::actualizarTablero(int dado, string jugador){
 	imprimirEnPosicion(24, 7, 15, 0, "                    ");
 	imprimirEnPosicion(24, 7, 15, 0, jugador);
 	stringstream ss;
-	ss << dado;
-	imprimirEnPosicion(20, 8, 15, 0, ss.str());
-	cin.get();
+	ss << "Le ha tocado un " << dado << " en el dado!";
+	imprimirEnPosicion(18, 9, 15, 0, ss.str());
+	pausarPantalla();
 }
 
 
@@ -162,29 +194,26 @@ void Interface::actualizarTablero(lists::Nodo *acceso, int* pagoMovil){
 		acceso = acceso->ant;
 	}
 	
+	
 	for (int i = 0; i < nJugadores; i++){
+		imprimirEnPosicion(62, 3+(2*i), i+3, 0, "    ");
 		stringstream ss;
-		if (pagoMovil[i] > 0){
+		if (pagoMovil[i] >= 0){
 			ss << "$" << pagoMovil[i];
 			imprimirEnPosicion(62, 3+(2*i), i+3, 0, ss.str());
 		}
 	}
 }
 
-#include "interface.h"
-#include <iostream>
-#include <conio.h> // Para _getch()
-
-using namespace std;
-
-// Otras funciones ya definidas
-
-char* Interface::preguntarJugador(const string& pregunta) {
+char* Interface::preguntarJugador(lists::Nodo* acceso, const string& pregunta) {
     static char respuesta[2];
     char tecla = '\0';
+    stringstream ss;
     
+    ss << "Estas en " << acceso->name;
+    imprimirEnPosicion(15,11, 15, 0, ss.str());
     while (true) {
-    	imprimirEnPosicion(15, 11, 15, 0, pregunta);
+    	imprimirEnPosicion(15, 13, 15, 0, pregunta);
         tecla = _getch(); // Espera a que el usuario presione una tecla
 
         if (tecla == 'S' || tecla == 's') {
@@ -195,9 +224,81 @@ char* Interface::preguntarJugador(const string& pregunta) {
             break;
         }
     }
+    imprimirEnPosicion(15, 13, 15, 0, "                                   ");
     imprimirEnPosicion(15, 11, 15, 0, "                                   ");
     return respuesta;
 }
 
+void Interface::propiedadAdquirida(lists::Nodo* acceso, int tipo, string nombre){
+    stringstream ss;
+    ss << "Estas en " << acceso->name;
+    imprimirEnPosicion(15,11, 15, 0, ss.str());
+    
+    if (tipo == 0){
+    	imprimirEnPosicion(15, 13, 15, 0, "Estas en tu propiedad");
+	} else if (tipo == 1){
+		ss.str("");
+		ss << "Estas en propiedad de: " << nombre;
+		imprimirEnPosicion(15 , 13, 15, 0, ss.str());
+		ss.str("");
+		ss << "Te corresponde pagarle " << "$" << (acceso->price*0.20);
+		imprimirEnPosicion(15, 14, 15, 0, ss.str());
+	}
+	
+	pausarPantalla();
+    imprimirEnPosicion(15, 13, 15, 0, "                                   ");
+    imprimirEnPosicion(15, 11, 15, 0, "                                   ");
+    imprimirEnPosicion(15, 14, 15, 0, "                                   ");
+}
 
+void Interface::casillaEspecial(lists::Nodo* acceso){
+    stringstream ss;
+    ss << "Estas en " << acceso->name;
+    imprimirEnPosicion(15,11, 15, 0, ss.str());
+    
+    ss.str("");
+    ss << "Te corresponde pagar " << "$" << acceso->price << " de peaje";
+    imprimirEnPosicion(15,13,15,0, ss.str());
+	pausarPantalla();
+    imprimirEnPosicion(15, 13, 15, 0, "                                   ");
+    imprimirEnPosicion(15, 11, 15, 0, "                                   ");
+}
+
+void Interface::imprimirTarjeta(const char *locations){
+	imprimirEnPosicion(15,11, 15, 0, "Has caido en ??");
+	imprimirEnPosicion(15,13, 15, 0, "Agarras una tarjeta y...");
+	stringstream ss;
+	ss << "Te toca moverte hacia " << locations << "!";
+	imprimirEnPosicion(15,14, 15, 0, ss.str());
+	
+	pausarPantalla();
+    imprimirEnPosicion(15, 13, 15, 0, "                                   ");
+    imprimirEnPosicion(15, 11, 15, 0, "                                   ");
+    imprimirEnPosicion(15, 14, 15, 0, "                                   ");
+}
+
+void Interface::eliminarJugador(int jugador, string nombre){
+	
+	stringstream ss;
+	ss << "'*' " << nombre << "-> ELIMINADO";
+	imprimirEnPosicion(67, 3+(2*jugador), 8, 0, ss.str());
+}
+
+void Interface::ganadorPartida(string nombre){
+	imprimirEnPosicion(0,0, 15, 0, "");
+	system("cls");
+	//Impresion de bordes
+	cout << endl << endl;
+	cout << "    ---------------------------------------------------------" << endl;
+	cout << "    |      |      |      |      |      |      |      |      |" << endl;
+	cout << "    |                                                       |" << endl;
+	cout << "    |      |      |      |      |      |      |      |      |" << endl;
+	cout << "    ---------------------------------------------------------" << endl;
+	
+	stringstream ss;
+	ss << "Ganador: " << nombre; 
+	imprimirEnPosicion(25,4, 10, 0, ss.str());
+	imprimirEnPosicion(15,7, 15, 0, "");
+	system("PAUSE");
+}
 

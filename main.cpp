@@ -16,6 +16,7 @@ void init(int _nPlayers);
 std::vector<std::string> nombres;
 std::vector<lists::Nodo*> accesoJugador;
 int random();
+void eliminarJugador(int, lists::Nodo *&);
 const char* datos[] = {
         "GO TO JAIL",
         "GO TO THE START",
@@ -30,6 +31,8 @@ int main(int argc, char** argv) {
 	do{
 		menu = interfaz.menu();
 		if (menu){
+			acceso = NULL;
+			gameOver = false;
 			nombres = interfaz.pedirDatos();
 			int nPlayers = nombres.size();
 			lista.readLoop(acceso, "tablero.txt");
@@ -70,6 +73,10 @@ void start(int _nPlayers)
 		// For para cada jugador en la ronda
 		for(int i = 0; i < _nPlayers; i++)
 		{
+			if (pagoMovil[i] < 0) 
+				continue;
+				
+			//Saltarse 
 			if(diasCarcel[i] == 0 || diasCarcel[i] == 4){
 				// El jugador no est� en la c�rcel o reci�n sali� de la c�rcel
 				diasCarcel[i] = 0;
@@ -83,123 +90,64 @@ void start(int _nPlayers)
 				// Movemos al jugador tantas casillas lo indique el dado
 				for(int a= 0; a<dado; a++){
 					accesoJugador[i] = accesoJugador[i]->ant;
-					if(strcmpi(accesoJugador[i]->name, "HOME") == 0){
+					if(strcmpi(accesoJugador[i]->name, "HOME") == 0)
 						pagoMovil[i] += 200;
-						rondaTerminada = true;
-					}
 				}
 				// Ubicamos al jugador en la nueva casilla
 				accesoJugador[i]->isHere[i] = true;
 				
 				interfaz.actualizarTablero(acceso, pagoMovil); //Imprimir movimiento, actualiza precio.
 				
-				
-				// If para verificar si caimos en una de las casillas principales
-				if(strcmpi(accesoJugador[i]->name, "??") == 0){ // Si caemos aqu�, moveremos al jugador
-					tarjeta = random();
-					// Con un do recorremos el tablero hasta encontrar la posici�n de la tarjeta que obtuvo el usuario en la ronda
-					do
-					{
-						switch (tarjeta){
-							case 1:
-								if(strcmpi(acceso->name, "JAIL") == 0){
-									// Movemos al jugador de la posici�n original
-									accesoJugador[i]->isHere[i] = false;
-									accesoJugador[i] = acceso;
-									// Lo ubicamos en la nueva posici�n
-									accesoJugador[i]->isHere[i] = true;
-									ubicacionEncontrada = true;
-								}
-								break;
-							case 2:
-								if(strcmpi(acceso->name, "HOME") == 0){
-									accesoJugador[i]->isHere[i] = false;
-									accesoJugador[i] = acceso;
-									accesoJugador[i]->isHere[i] = true;
-									ubicacionEncontrada = true;
-								}
-								break;
-							case 3:
-								if(strcmpi(acceso->name, "ELECTRICITY") == 0){
-									accesoJugador[i]->isHere[i] = false;
-									accesoJugador[i] = acceso;
-									accesoJugador[i]->isHere[i] = true;
-									ubicacionEncontrada = true;
-								}
-								break;
-							case 4:
-								if(strcmpi(acceso->name, "RAILWAY") == 0){
-									accesoJugador[i]->isHere[i] = false;
-									accesoJugador[i] = acceso;
-									accesoJugador[i]->isHere[i] = true;
-									ubicacionEncontrada = true;
-								}
-								break;
-							case 5:
-								if(strcmpi(acceso->name, "HARBOR") == 0){
-									accesoJugador[i]->isHere[i] = false;
-									accesoJugador[i] = acceso;
-									accesoJugador[i]->isHere[i] = true;
-									ubicacionEncontrada = true;
-								}
-								break;
-							case 6:
-								if(strcmpi(acceso->name, "AIRPORT") == 0){
-									accesoJugador[i]->isHere[i] = false;
-									accesoJugador[i] = acceso;
-									accesoJugador[i]->isHere[i] = true;
-									ubicacionEncontrada = true;
-								}
-								break;
-						}
-						// Si encontramos la ubicaci�n de la tarjeta deja de repetirse el while
-						iterador++;
-						acceso = acceso->ant;
-					}
-					while(!ubicacionEncontrada && iterador < 28);
+				// If para verificar ??, cayendo en una de las casillas principales
+				if (strcmpi(accesoJugador[i]->name, "??") == 0) {
+					ubicacionEncontrada = false;
+					iterador = 0;
+				    tarjeta = random();
+				    const char *locations[] = {"JAIL", "HOME", "ELECTRICITY", "RAILWAY", "HARBOR", "AIRPORT"};
+				    accesoJugador[i]->isHere[i] = false;
+				    do {
+				    	iterador++;
+				        accesoJugador[i] = accesoJugador[i]->ant;
+				        if (strcmpi(accesoJugador[i]->name, locations[tarjeta - 1]) == 0) {
+				            accesoJugador[i]->isHere[i] = true;
+				            ubicacionEncontrada = true;
+				        }
+				    } while (!ubicacionEncontrada && iterador < 28);
+					interfaz.imprimirTarjeta(locations[tarjeta-1]);
+					interfaz.actualizarTablero(acceso, pagoMovil); 
 				}
+				
 				if(!rondaTerminada){
 					// Revisamos si el jugador est� en una de las casillas especiales para que pague
-					if(strcmpi(accesoJugador[i]->name, "HARBOR") == 0){
-						if(pagoMovil[i] >= accesoJugador[i]->price){
-							pagoMovil[i] -= accesoJugador[i]->price;
-						}else{
-							retirados++;
-						}
-						rondaTerminada = true;
-					}else if(strcmpi(accesoJugador[i]->name, "RAILWAY") == 0){
-						if(pagoMovil[i] >= accesoJugador[i]->price){
-							pagoMovil[i] -= accesoJugador[i]->price;
-						}else{
-							retirados++;
-						}
-						rondaTerminada = true;
-					}else if(strcmpi(accesoJugador[i]->name, "AIRPORT") == 0){
-						if(pagoMovil[i] >= accesoJugador[i]->price){
-							pagoMovil[i] -= accesoJugador[i]->price;
-						}else{
-							retirados++;
-						}
-						rondaTerminada = true;
-					}else if(strcmpi(accesoJugador[i]->name, "JAIL") == 0){
-						// AQU� DEBEMOS PREGUNTAR AL JUGADOR SI DESEA PAGAR O PREFIERE PASAR TRES TURNOS EN LA C�RCEL
-						if(strcmpi(compra, "S") == 0){
-							// Si quiere pagar
-							if(pagoMovil[i] >= accesoJugador[i]->price){
-								pagoMovil[i] -= accesoJugador[i]->price;
+					const char* casillasEspeciales[] = { "HARBOR", "RAILWAY", "AIRPORT", "ELECTRICITY" };
+					for (int j=0; j<4; j++){
+						if(strcmpi(accesoJugador[i]->name, casillasEspeciales[j]) == 0){
+							interfaz.casillaEspecial(accesoJugador[i]);
+							if(!(pagoMovil[i] >= 50)/*accesoJugador[i]->price*/){
+								retirados++;
+								eliminarJugador(i, accesoJugador[i]);
 							}
-						}else{
-							// El jugador pasa tres turnos en la clase
+							pagoMovil[i] -= 50; //accesoJugador[i]->price;
+							rondaTerminada = true;
+						}
+					}
+					
+					if(strcmpi(accesoJugador[i]->name, "JAIL") == 0){
+						
+						if (pagoMovil[i] >= accesoJugador[i]->price){
+							std::string respuestaStr = interfaz.preguntarJugador(accesoJugador[i], "Desea pagar $150 para salir? (S/N)");
+							strcpy(compra, respuestaStr.c_str());
+							if(strcmpi(compra, "S") == 0)
+								pagoMovil[i] -= accesoJugador[i]->price;
+						}else {
 							diasCarcel[i] ++;
 						}
 						
 						rondaTerminada = true;
-					}else if(strcmpi(accesoJugador[i]->name, "ELECTRICITY") == 0){
-						if(pagoMovil[i] >= accesoJugador[i]->price){
-							pagoMovil[i] -= accesoJugador[i]->price;
-						}else{
-							retirados++;
-						}
+					}
+					
+					if(strcmpi(accesoJugador[i]->name, "HOME") == 0){
+						pagoMovil[i]+=200;
 						rondaTerminada = true;
 					}
 				}
@@ -210,14 +158,18 @@ void start(int _nPlayers)
 						if(accesoJugador[i]->houseHere[s]){
 							seVende = false;
 							if(s == i){
+								interfaz.propiedadAdquirida(accesoJugador[i], 0, nombres[s]);
 								break;
 							}else{
-								if(pagoMovil[i] >= accesoJugador[i]->price){
-									pagoMovil[i] -= accesoJugador[i]->price;
-									pagoMovil[s] += accesoJugador[i]->price;
+								interfaz.propiedadAdquirida(accesoJugador[i], 1, nombres[s]);
+								int montoFinal = accesoJugador[i]->price * 0.20;
+								pagoMovil[i] -= montoFinal;
+								if(pagoMovil[i] >= montoFinal){
+									pagoMovil[s] += montoFinal;
 									break;
 								}else{
-									accesoJugador[i] = NULL;
+									retirados++;
+									eliminarJugador(i, accesoJugador[i]);
 								}
 							}
 						}
@@ -226,7 +178,7 @@ void start(int _nPlayers)
 					if(seVende){
 						// Preguntamos si quiere comprar la propiedad
 						if (pagoMovil[i] >= accesoJugador[i]->price){
-							std::string respuestaStr = interfaz.preguntarJugador("Desea comprar esta propiedad? (S/N)");
+							std::string respuestaStr = interfaz.preguntarJugador(accesoJugador[i], "Desea comprar esta propiedad? (S/N)");
 							strcpy(compra, respuestaStr.c_str());
 							if((strcmpi(compra, "S") == 0)){
 								// El jugador adquiere la casa
@@ -236,15 +188,15 @@ void start(int _nPlayers)
 						}
 					}
 				}
-			}else{
-				// El jugador est� en la c�rcel
+			}else{ // Jugador en la carcel
+				diasCarcel[i]++;
 			}
 			
-			// AQU� SE DEBE REFRESCAR EL TABLERO
 			interfaz.actualizarTablero(acceso, pagoMovil);
 			
-			if(_nPlayers - retirados == 1){
+			if(_nPlayers - retirados == 1 || pagoMovil[i] > 5000){
 				gameOver = true;
+				interfaz.ganadorPartida(nombres[i]);
 				break;
 			}
 		} // Aqu� termina el turno de un jugador
@@ -259,4 +211,13 @@ int random()
 	return std::rand()%6+1;
 }
 
+void eliminarJugador(int jugador, lists::Nodo *&acceso){
+	acceso->isHere[jugador] = false;
+	for (int i = 0; i < 28; i++){
+		if (acceso->houseHere[jugador])
+			acceso->houseHere[jugador] = false;
+		acceso = acceso->ant;
+	}
+	interfaz.eliminarJugador(jugador, nombres[jugador]);
+}
 
