@@ -198,7 +198,7 @@ void Interface::actualizarTablero(lists::Nodo *acceso, int* pagoMovil){
 	
 	
 	for (int i = 0; i < nJugadores; i++){
-		imprimirEnPosicion(62, 3+(2*i), i+3, 0, "    ");
+		imprimirEnPosicion(62, 3+(2*i), i+3, 0, "     ");
 		stringstream ss;
 		if (pagoMovil[i] >= 0){
 			ss << "$" << pagoMovil[i];

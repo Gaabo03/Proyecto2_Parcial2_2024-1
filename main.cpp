@@ -78,7 +78,10 @@ void start(int _nPlayers)
 				continue;
 				
 			//Saltarse 
-			if(diasCarcel[i] == 0 || diasCarcel[i] == 4){
+			if(accesoJugador[i] == NULL){
+				// EL JUGADOR NO EXISTE
+				
+			}else if(diasCarcel[i] == 0 || diasCarcel[i] == 4){
 				// El jugador no est� en la c�rcel o reci�n sali� de la c�rcel
 				diasCarcel[i] = 0;
 				seVende = true;
@@ -120,18 +123,6 @@ void start(int _nPlayers)
 				
 				if(!rondaTerminada){
 					// Revisamos si el jugador est� en una de las casillas especiales para que pague
-					const char* casillasEspeciales[] = { "HARBOR", "RAILWAY", "AIRPORT", "ELECTRICITY" };
-					for (int j=0; j<4; j++){
-						if(strcmpi(accesoJugador[i]->name, casillasEspeciales[j]) == 0){
-							interfaz.casillaEspecial(accesoJugador[i]);
-							if(!(pagoMovil[i] >= accesoJugador[i]->price)/*accesoJugador[i]->price*/){
-								retirados++;
-								eliminarJugador(i, accesoJugador[i]);
-							}
-							pagoMovil[i] -= accesoJugador[i]->price; //accesoJugador[i]->price;
-							rondaTerminada = true;
-						}
-					}
 					
 					if(strcmpi(accesoJugador[i]->name, "JAIL") == 0){
 						
@@ -155,6 +146,23 @@ void start(int _nPlayers)
 						pagoMovil[i]+=200;
 						rondaTerminada = true;
 					}
+					
+					const char* casillasEspeciales[] = { "HARBOR", "RAILWAY", "AIRPORT", "ELECTRICITY" };
+					for (int j=0; j<4; j++){
+						if(strcmpi(accesoJugador[i]->name, casillasEspeciales[j]) == 0){
+							interfaz.casillaEspecial(accesoJugador[i]);
+							if(!(pagoMovil[i] >= accesoJugador[i]->price)){
+								retirados++;
+								eliminarJugador(i, accesoJugador[i]);
+								pagoMovil[i] -= accesoJugador[i]->price;
+								accesoJugador[i] = NULL;
+							} else {
+								pagoMovil[i] -= accesoJugador[i]->price;
+							}
+							rondaTerminada = true;
+							break;
+						}
+					}
 				}
 				
 				if(!rondaTerminada){
@@ -173,9 +181,9 @@ void start(int _nPlayers)
 									pagoMovil[i] -= montoFinal;
 									break;
 								}else{
-									accesoJugador[i] == NULL;
 									retirados++;
 									eliminarJugador(i, accesoJugador[i]);
+									accesoJugador[i] == NULL;
 								}
 							}
 						}
@@ -194,9 +202,6 @@ void start(int _nPlayers)
 						}
 					}
 				}
-			}else if(accesoJugador[i] == NULL){
-				// EL JUGADOR NO EXISTE
-				
 			}else if(diasCarcel[i] > 0 && diasCarcel[i] < 4){ // Jugador en la carcel
 				diasCarcel[i]++;
 			}
