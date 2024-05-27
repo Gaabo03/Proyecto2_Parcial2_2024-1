@@ -138,12 +138,16 @@ void start(int _nPlayers)
 						if (pagoMovil[i] >= accesoJugador[i]->price){
 							std::string respuestaStr = interfaz.preguntarJugador(accesoJugador[i], "Desea pagar $150 para salir? (S/N)");
 							strcpy(compra, respuestaStr.c_str());
-							if(strcmpi(compra, "S") == 0)
+							
+							if(strcmpi(compra, "S") == 0){
 								pagoMovil[i] -= accesoJugador[i]->price;
+							}else {
+								diasCarcel[i] ++;
+							}
+							
 						}else {
 							diasCarcel[i] ++;
 						}
-						
 						rondaTerminada = true;
 					}
 					
@@ -166,9 +170,9 @@ void start(int _nPlayers)
 								int montoFinal = accesoJugador[i]->price * 0.20;
 								if(pagoMovil[i] >= montoFinal){
 									pagoMovil[s] += montoFinal;
+									pagoMovil[i] -= montoFinal;
 									break;
 								}else{
-									pagoMovil[i] -= montoFinal;
 									accesoJugador[i] == NULL;
 									retirados++;
 									eliminarJugador(i, accesoJugador[i]);
@@ -193,7 +197,7 @@ void start(int _nPlayers)
 			}else if(accesoJugador[i] == NULL){
 				// EL JUGADOR NO EXISTE
 				
-			}else{ // Jugador en la carcel
+			}else if(diasCarcel[i] > 0 && diasCarcel[i] < 4){ // Jugador en la carcel
 				diasCarcel[i]++;
 			}
 			
