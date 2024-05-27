@@ -153,8 +153,8 @@ void start(int _nPlayers)
 							interfaz.casillaEspecial(accesoJugador[i]);
 							if(!(pagoMovil[i] >= accesoJugador[i]->price)){
 								retirados++;
-								eliminarJugador(i, accesoJugador[i]);
 								pagoMovil[i] -= accesoJugador[i]->price;
+								eliminarJugador(i, accesoJugador[i]);
 								accesoJugador[i] = NULL;
 							} else {
 								pagoMovil[i] -= accesoJugador[i]->price;
